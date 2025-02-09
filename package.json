@@ -1,0 +1,14 @@
+{
+  "name": "be-ts-ilaris-flight-diaries-fso",
+  "version": "1.0.0",
+  "description": "Ilari's flight diaries",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "typescript"
+  ],
+  "author": "Rickyslash",
+  "license": "ISC"
+}
