@@ -1,38 +1,29 @@
-import express, { Response } from 'express';
+import express, { NextFunction, Response, Request } from 'express';
 import diaryService from '../services/diaryService';
-import { NewDiaryEntry, NonSensitiveDiaryEntry } from '../types';
-import { toNewDiaryEntry } from '../utils';
+import { DiaryEntry, NewDiaryEntry, NonSensitiveDiaryEntry } from '../types';
+import { NewEntrySchema } from '../utils';
 import z from 'zod';
 
 const diaryRouter = express.Router();
+
+const newDiaryParser = (req: Request, _res: Response, next: NextFunction) => {
+  try {
+    NewEntrySchema.parse(req.body);
+    next();
+  } catch (e: unknown) {
+    next(e);
+  }
+};
 
 diaryRouter.get('/', (_req, res: Response<NonSensitiveDiaryEntry[]>) => {
   res.send(diaryService.getNonSensitiveEntries());
 });
 
-diaryRouter.post('/', (req, res) => {
-  let newDiaryEntry: NewDiaryEntry;
-
-  try {
-    newDiaryEntry = toNewDiaryEntry(req.body);
-
-    if (!newDiaryEntry.date || !newDiaryEntry.visibility || !newDiaryEntry.weather) {
-      res.sendStatus(404);
-      return;
-    }
-  } catch(e: unknown) {
-    if (e instanceof z.ZodError) {
-      res.status(400).send({ error: e.issues });
-      return;
-    }
-
-    if (e instanceof Error) res.status(400).send({ error: e.message }); 
-    
-    return;
-  }
-
-  const addedEntry = diaryService.addDiary(newDiaryEntry);
-
+diaryRouter.post('/', newDiaryParser, (
+  req: Request<unknown, unknown, NewDiaryEntry>,
+  res: Response<DiaryEntry>
+) => {
+  const addedEntry = diaryService.addDiary(req.body);
   res.json(addedEntry);
 });
 
@@ -57,5 +48,16 @@ diaryRouter.get('/:id', (req, res) => {
   
   res.send(diary);
 });
+
+const errorMiddleWare = (e: unknown, _req: Request, res: Response, next: NextFunction) => {
+  if (e instanceof z.ZodError) {
+    res.status(400).send({ error: e.issues });
+    return;
+  }
+
+  next(e);
+};
+
+diaryRouter.use(errorMiddleWare);
 
 export default diaryRouter;
