@@ -9,15 +9,15 @@ const toNewDiaryEntry = (object: unknown): NewDiaryEntry => {
     && 'date' in object
     && 'weather' in object
     && 'visibility' in object) {
-      const newEntry: NewDiaryEntry = {
-        weather: parseWeather(object.weather),
-        visibility: parseVisibility(object.visibility),
-        date: parseDate(object.date),
-        comment: parseComment(object.comment)
-      };
+    const newEntry: NewDiaryEntry = {
+      weather: parseWeather(object.weather),
+      visibility: parseVisibility(object.visibility),
+      date: parseDate(object.date),
+      comment: parseComment(object.comment)
+    };
 
-      return newEntry;
-    }
+    return newEntry;
+  }
 
   throw new Error('Incorrect data: required fields are missing');
 };
