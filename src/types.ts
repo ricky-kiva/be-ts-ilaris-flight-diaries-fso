@@ -6,7 +6,12 @@ export enum Weather {
   Stormy = 'stormy'
 };
 
-export type Visiblity = 'great' | 'good' | 'ok' | 'poor';
+export enum Visiblity {
+  Great = 'great',
+  Good = 'good',
+  OK = 'ok',
+  Poor = 'poor'
+};
 
 export type NonSensitiveDiaryEntry = Omit<DiaryEntry, 'comment'>;
 export type NewDiaryEntry = Omit<DiaryEntry, 'id'>;
