@@ -1,6 +1,7 @@
 import express, { Response } from 'express';
 import diaryService from '../services/diaryService';
 import { NewDiaryEntry, NonSensitiveDiaryEntry } from '../types';
+import toNewDiaryEntry from '../utils';
 
 const diaryRouter = express.Router();
 
@@ -12,7 +13,7 @@ diaryRouter.post('/', (req, res) => {
   let newDiaryEntry: NewDiaryEntry;
 
   try {
-    newDiaryEntry = req.body as NewDiaryEntry;
+    newDiaryEntry = toNewDiaryEntry(req.body);
 
     if (!newDiaryEntry.date || !newDiaryEntry.visibility || !newDiaryEntry.weather) {
       res.sendStatus(404);
